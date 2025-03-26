@@ -108,8 +108,49 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    print("JESUTOMIWO THE NIGERIAN PRINCE")
+    
+    starting_node = problem.getStartState()
+    num_nodes_generated = 0
+    #if the starting state is the goal state, return an empty path
+    if problem.isGoalState(starting_node):
+        return [], 1 #if start_node is the goal return path(empty) and num of nodes generated which is 1
+    
+    #Intialize the open list with the starting state, empty path, and cost 0
+    open_list = [(starting_node, [], 0)]#essentially stores starting node, list of nodes and actual cost
+    visited = set()#Set to keep track of visited nodes
+
+    while open_list:
+        #sort the open list by f(n)=g(n)+h(n)
+        open_list.sort(key=lambda x:x[2]+heuristic(x[0],problem))
+
+        #pop the node with the lowest f-cost
+        node, path, cost = open_list.pop(0)
+
+        #if this node has been visited, continue to the next node
+        if node in visited:
+            continue
+
+        #mark this curernt node as visited
+        visited.add(node)
+        num_nodes_generated+= 1
+
+        #check if we have reached the goal state
+        if problem.isGoalState(node):
+            return path, num_nodes_generated
+        
+        #expand successors
+        for suc, action, step_cost in problem.getSuccessors(node):
+            #check if successor has been visited
+            if suc not in visited:
+                new_cost = cost + step_cost #g(n) for the successor
+                new_path = path + [action] #Path to reach the successor
+                #append successor, path, and cost
+                open_list.append((suc,new_path,new_cost))
+
+    return None
+
+
+    
     util.raiseNotDefined()
 
 
